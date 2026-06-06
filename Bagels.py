@@ -1,6 +1,6 @@
 import random
 NUM_DIGITS = 3
-MAX_GUSSES = 10 
+MAX_GUESSES = 10 
 
 def main():
     print('''Bagels, a deductive logic game.
@@ -17,22 +17,42 @@ def main():
     clues would be Fermi Pico.'''.format(NUM_DIGITS))
 
     while True:
-        secretnumber = getSecretNum()
+        secNumber = getSecretNum()
         print ('I have thought up a number.')
-        print ('you have {}guesses to get it.'.format(MAX_GUSSES))
+        print ('you have {}guesses to get it.'.format(MAX_GUESSES))
 
         numGuess = 1
+        while numGuess <= MAX_GUESSES:
+            guess = ''
+            while len(guess) != NUM_DIGITS or not guess.isdecimal():
+                print ('Guess #{}'.format(numGuess))
+                guess = input ('> ')
+                
+            clues = getClues(guess, secNumber)
+            print(clues)
+            numGuess += 1
+                
+            if guess == secNumber:
+                break
+            if numGuess > MAX_GUESSES:
+                print('You ran out of guesses.')
+                print('The answer was {}.'.format(secNumber))
+
+        print('Do you want to play again? (yes or no)')
+        if not input('> ').lower().startswith('y'):
+            break
+    print('Thanks for playing!')
         
 
 def getSecretNum():
 
-    numbers = {1,2,3,4,5,6,7,8,9}
+    numbers = list('0123456789')
     random.shuffle(numbers)
 
     SecNum = ''
     for i in range(NUM_DIGITS):
-        SecNum += str(numbers(i))
-        return SecNum
+        SecNum += str(numbers[i])
+    return SecNum
     
 def getClues(guess, SecNum):
     if guess == SecNum:
@@ -47,11 +67,11 @@ def getClues(guess, SecNum):
         elif guess[i] in SecNum:
             clues.append('Pico')
     
-    if clues == 0:
+    if len(clues) == 0:
         return 'Bagels'
-    else:
-        clues.sort()
-        return ' '.join(clues)
+    
+    clues.sort()
+    return ' '.join(clues)
     
 if __name__ == '__main__':  
     main()
